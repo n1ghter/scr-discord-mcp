@@ -1,47 +1,47 @@
 # Star Citizen Ru — Discord MCP
 
-Приватный набор, чтобы свой AI читал сервер Star Citizen Ru так же, как Grok у n1ghter. Два локальных MCP, один бот, только REST.
+A local setup so an AI can read the Star Citizen Ru Discord the same way Grok does. Two MCP servers, one bot, REST only.
 
-Токена в этом репозитории нет и не должно появиться.
+This repository does not contain a bot token, and one should never be committed.
 
-## Что внутри
+## What is here
 
-| Путь | Что это |
+| Path | What it is |
 |---|---|
-| `discord-embeds/` | Локальный форк [glittercowboy/discord-mcp](https://github.com/glittercowboy/discord-mcp) (MIT). Читает эмбеды. Официальный `uvx` сейчас не ставится: нужен этот форк и `mcp<2`. |
-| `config.example.toml` | Кусок конфига для Grok или Codex. |
-| `PROMPT.md` | Промпт для AI: каналы, модель правил, чего не делать. |
+| `discord-embeds/` | Local fork of [glittercowboy/discord-mcp](https://github.com/glittercowboy/discord-mcp) (MIT). Reads message embeds. The upstream `uvx` install is currently broken; use this fork and pin `mcp<2`. |
+| `config.example.toml` | Config snippet for Grok or Codex. |
+| `PROMPT.md` | Prompt for the AI: channels, the rules model, and what not to do. |
 
-Второй сервер, `discord-mcp`, ставится с npm: `@discord-mcp/cli@0.23.0`. Его код здесь не лежит.
+The other server, `discord-mcp`, is installed from npm: `@discord-mcp/cli@0.23.0`. Its source is not in this repo.
 
-## Что нужно заранее
+## Before you start
 
 - Node 22+
 - Python 3.12+
 - [uv](https://docs.astral.sh/uv/)
-- Доступ в Discord Developer Portal к приложению бота **Star Citizen Ru AI** (n1ghter добавляет в Team). Токен снимаешь там сам: Bot → Reset Token. В чат и в git не клади.
+- Access to the **Star Citizen Ru AI** application in the Discord Developer Portal (ask n1ghter to add you to the team). Copy the token yourself: Bot → Reset Token. Do not paste it into chat or git.
 
-Бот уже на сервере. Второй раз приглашать не надо. Gateway не включай: два клиента с одним токеном живут только на REST.
+The bot is already on the server. Do not invite it again. Do not enable the Gateway: two clients can share one token only over REST.
 
-## Установка
+## Install
 
-1. Склонируй репозиторий, запомни полный путь к `discord-embeds`.
-2. Токен в переменную пользователя, не в файл:
+1. Clone the repo and note the full path to `discord-embeds`.
+2. Store the token in a user environment variable, not in a file:
 
    Windows PowerShell:
 
    ```powershell
-   [Environment]::SetEnvironmentVariable("DISCORD_BOT_TOKEN", "токен-из-портала", "User")
+   [Environment]::SetEnvironmentVariable("DISCORD_BOT_TOKEN", "token-from-the-portal", "User")
    ```
 
-   Перезапусти терминал и AI, чтобы переменная подхватилась.
+   Restart the terminal and the AI so the variable is picked up.
 
-3. Вставь `config.example.toml` в конфиг AI. В `args` замени `ПУТЬ/scr-discord-mcp/discord-embeds` на свой путь. Для Grok это `~\.grok\config.toml`. Для Codex — его `config.toml` с теми же секциями `[mcp_servers.*]`.
-4. Перезапусти AI. В списке MCP должны быть `discord-mcp` и `discord-embeds`.
-5. Первым сообщением или системным промптом отдай текст из `PROMPT.md`.
+3. Paste `config.example.toml` into the AI config. In `args`, replace `ПУТЬ/scr-discord-mcp/discord-embeds` with your path. For Grok that file is `~\.grok\config.toml`. For Codex, use the same `[mcp_servers.*]` sections in its `config.toml`.
+4. Restart the AI. The MCP list should show `discord-mcp` and `discord-embeds`.
+5. Give the AI the text in `PROMPT.md` as the system prompt or as the first message.
 
-Запись в Discord остаётся в `preview`. Живой канал правил не патчить.
+Discord writes stay in `preview`. Do not patch the live rules channel.
 
-## Проверка
+## Check
 
-Попроси AI прочитать одно сообщение клона правил `1551138561024196679` через discord-embeds. Если `content` пустой, а карточки есть — так и должно быть: текст сидит в эмбедах.
+Ask the AI to read one message from the rules clone `1551138561024196679` through discord-embeds. An empty `content` with cards present is expected: the text lives in the embeds.
