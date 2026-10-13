@@ -1,6 +1,5 @@
-# Пример для Grok (~/.grok/config.toml) и того же вида для Codex.
-# Токен НЕ сюда. Положи его в переменную окружения DISCORD_BOT_TOKEN.
-# Discord Developer Portal → Bot → Reset Token. В чат и в git не класть.
+# Example for Grok (~/.grok/config.toml) and the same shape for Codex.
+# Do not put the token here. Set the DISCORD_BOT_TOKEN environment variable.
 
 [mcp_servers.discord-mcp]
 command = "npx"
@@ -18,7 +17,7 @@ MCP_CATEGORIES = "messages,channels,threads,members,roles,permissions,guild,audi
 
 [mcp_servers.discord-embeds]
 command = "uv"
-args = ["--directory", "ПУТЬ/scr-discord-mcp/discord-embeds", "run", "python", "-m", "src.server"]
+args = ["--directory", "PATH/scr-discord-mcp/discord-embeds", "run", "python", "-m", "src.server"]
 startup_timeout_sec = 180
 tool_timeout_sec = 120
 

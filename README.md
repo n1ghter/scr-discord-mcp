@@ -6,7 +6,7 @@ A local setup so an AI can read the Star Citizen Ru Discord the same way Grok do
 
 | Path | What it is |
 |---|---|
-| `discord-embeds/` | Local fork of [glittercowboy/discord-mcp](https://github.com/glittercowboy/discord-mcp) (MIT). Reads message embeds. The upstream `uvx` install is currently broken; use this fork and pin `mcp<2`. |
+| `discord-embeds/` | Local fork of [glittercowboy/discord-mcp](https://github.com/glittercowboy/discord-mcp) (MIT). Reads message embeds. The upstream `uvx` install is currently broken; use this fork and pin `mcp<2`. Its own `README.md` is the upstream manual (kick, ban, full admin). Ignore it. Install from this page. |
 | `config.example.toml` | Config snippet for Grok or Codex. |
 | `PROMPT.md` | Prompt for the AI: channels, the rules model, and what not to do. |
 | `skills/discord-audit/SKILL.md` | Router: cappyeo for structure and plain text, glittercowboy for embed cards. |
@@ -18,7 +18,7 @@ The other server, `discord-mcp`, is installed from npm: `@discord-mcp/cli@0.23.0
 - Node 22+
 - Python 3.12+
 - [uv](https://docs.astral.sh/uv/)
-- Access to the **Star Citizen Ru AI** application in the Discord Developer Portal (ask n1ghter to add you to the team). Copy the token yourself: Bot → Reset Token. Do not paste it into chat or git.
+- The bot token from n1ghter, in a direct message. Do not click Reset Token. That kills the token he is already using. Do not paste it into chat or git.
 
 The bot is already on the server. Do not invite it again. Do not enable the Gateway: two clients can share one token only over REST.
 
@@ -35,7 +35,7 @@ The bot is already on the server. Do not invite it again. Do not enable the Gate
 
    Restart the terminal and the AI so the variable is picked up.
 
-3. Paste `config.example.toml` into the AI config. In `args`, replace `ПУТЬ/scr-discord-mcp/discord-embeds` with your path. For Grok that file is `~\.grok\config.toml`. For Codex, use the same `[mcp_servers.*]` sections in its `config.toml`.
+3. Paste `config.example.toml` into the AI config. In `args`, replace `PATH/scr-discord-mcp/discord-embeds` with your path. For Grok that file is `~\.grok\config.toml`. For Codex, use the same `[mcp_servers.*]` sections in its `config.toml`.
 4. Restart the AI. The MCP list should show `discord-mcp` and `discord-embeds`.
 5. Give the AI the text in `PROMPT.md` as the system prompt or as the first message.
 6. If the AI loads skills from disk (Grok), copy `skills/discord-audit` to `~\.grok\skills\discord-audit`. That file is the router between the two MCP servers. Codex and others should be told to follow `skills/discord-audit/SKILL.md`.
