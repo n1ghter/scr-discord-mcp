@@ -2,8 +2,6 @@
 
 A local setup so an AI can read the Star Citizen Ru Discord the same way Grok does. Two MCP servers, one bot, REST only.
 
-This repository does not contain a bot token, and one should never be committed.
-
 ## What is here
 
 | Path | What it is |
