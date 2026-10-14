@@ -42,6 +42,24 @@ The bot is already on the server. Do not invite it again. Do not enable the Gate
 
 Discord writes stay in `preview`. Do not patch the live rules channel.
 
+## Claude Desktop and Claude Code (Windows)
+
+`scripts/windows/discord-mcp.cmd` and `scripts/windows/discord-embeds.cmd` start the two servers with the same settings as `config.example.toml`. They read `DISCORD_BOT_TOKEN` from the user environment, so no token goes into any config file.
+
+1. Add both to `%APPDATA%\Claude\claude_desktop_config.json` (Claude Desktop) and to the top-level `mcpServers` of `%USERPROFILE%\.claude.json` (Claude Code, add `"type": "stdio"`):
+
+   ```json
+   "mcpServers": {
+     "discord-mcp": { "command": "cmd", "args": ["/c", "C:\\path\\to\\scr-discord-mcp\\scripts\\windows\\discord-mcp.cmd"] },
+     "discord-embeds": { "command": "cmd", "args": ["/c", "C:\\path\\to\\scr-discord-mcp\\scripts\\windows\\discord-embeds.cmd"] }
+   }
+   ```
+
+2. Block cappyeo writes in Claude Code with `permissions.deny` in `%USERPROFILE%\.claude\settings.json`: `mcp__discord-mcp__mcp_tools_write`, `mcp__discord-mcp__mcp_tools_destructive`, `mcp__discord-mcp__build_discord_server`, `mcp__discord-mcp__guild_blueprint_apply`.
+3. Quit Claude Desktop from the tray icon and start it again. Closing the window is not enough.
+
+`discord-embeds` is read-only in this fork: `discord_execute` runs only the operations in `DISCORD_ALLOWED_OPERATIONS` (default: `messages.list`, `messages.get`, `messages.list_pins`, `channels.list`, `channels.get`, `roles.list`, `roles.get`, `guild.get`, `members.get`, `members.search`, `audit_log.list`, `onboarding.get`). `messages.list` also accepts `before`, `after` or `around` for paging.
+
 ## Check
 
 Ask the AI to read one message from the rules clone `1551138561024196679` through discord-embeds. An empty `content` with cards present is expected: the text lives in the embeds.

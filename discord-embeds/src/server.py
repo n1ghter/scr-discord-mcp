@@ -24,6 +24,30 @@ BASE_URL = "https://discord.com/api/v10"
 BOT_TOKEN = os.environ.get("DISCORD_BOT_TOKEN", "")
 GUILD_ID = os.environ.get("DISCORD_GUILD_ID", "")
 
+# Operations discord_execute may run. Read-only by default; set
+# DISCORD_ALLOWED_OPERATIONS to a comma-separated list ("messages.*" allows a
+# whole category, "*" allows everything) to widen it deliberately.
+DEFAULT_ALLOWED_OPERATIONS = (
+    "messages.list,messages.get,messages.list_pins,"
+    "channels.list,channels.get,"
+    "roles.list,roles.get,"
+    "guild.get,members.get,members.search,"
+    "audit_log.list,onboarding.get"
+)
+ALLOWED_OPERATIONS = {
+    op.strip()
+    for op in os.environ.get("DISCORD_ALLOWED_OPERATIONS", DEFAULT_ALLOWED_OPERATIONS).split(",")
+    if op.strip()
+}
+
+
+def is_allowed(operation: str) -> bool:
+    """Return True if the operation is in DISCORD_ALLOWED_OPERATIONS."""
+    if "*" in ALLOWED_OPERATIONS or operation in ALLOWED_OPERATIONS:
+        return True
+    return f"{operation.split('.', 1)[0]}.*" in ALLOWED_OPERATIONS
+
+
 mcp = FastMCP("discord-mcp")
 
 
@@ -169,12 +193,20 @@ def discord_discover() -> str:
     """Browse all available Discord operations organized by category."""
     lines = ["# Discord Operations\n"]
     for cat_name, cat_data in OPERATIONS["categories"].items():
+        ops = [
+            (op_name, op_data)
+            for op_name, op_data in cat_data["operations"].items()
+            if is_allowed(f"{cat_name}.{op_name}")
+        ]
+        if not ops:
+            continue
         lines.append(f"## {cat_name}")
         lines.append(f"{cat_data['description']}\n")
-        for op_name, op_data in cat_data["operations"].items():
+        for op_name, op_data in ops:
             lines.append(f"- **{cat_name}.{op_name}**: {op_data['description']}")
         lines.append("")
     lines.append("\nUse `discord_get_schema` to see parameters for any operation.")
+    lines.append("Only operations allowed by DISCORD_ALLOWED_OPERATIONS are listed.")
     return "\n".join(lines)
 
 
@@ -235,6 +267,12 @@ async def discord_execute(operation: str, params: dict) -> str:
     else:
         return f"Invalid operation format: {operation}"
 
+    if not is_allowed(handler_key):
+        return (
+            f"Operation {operation} is disabled. This server is read-only unless "
+            "DISCORD_ALLOWED_OPERATIONS allows it."
+        )
+
     # Route to handler
     handler = HANDLERS.get(handler_key)
     if not handler:
@@ -276,12 +314,18 @@ async def handle_messages_send(params: dict) -> str:
 async def handle_messages_list(params: dict) -> str:
     channel_id = params["channel_id"]
     limit = min(params.get("limit", 50), 100)
+    query = {"limit": limit}
+    # Discord accepts at most one of before/after/around for paging.
+    for key in ("before", "after", "around"):
+        if params.get(key):
+            query[key] = params[key]
+            break
 
     async with httpx.AsyncClient() as client:
         resp = await client.get(
             f"{BASE_URL}/channels/{channel_id}/messages",
             headers=get_headers(),
-            params={"limit": limit},
+            params=query,
         )
         resp.raise_for_status()
         messages = resp.json()

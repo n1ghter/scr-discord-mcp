@@ -15,7 +15,10 @@
           "description": "Get recent messages from a channel",
           "parameters": {
             "channel_id": {"type": "string", "required": true, "description": "Channel ID to read from"},
-            "limit": {"type": "integer", "required": false, "description": "Number of messages (1-100, default 50)"}
+            "limit": {"type": "integer", "required": false, "description": "Number of messages (1-100, default 50)"},
+            "before": {"type": "string", "required": false, "description": "Return messages before this message ID (use one of before/after/around)"},
+            "after": {"type": "string", "required": false, "description": "Return messages after this message ID"},
+            "around": {"type": "string", "required": false, "description": "Return messages around this message ID"}
           }
         },
         "get": {

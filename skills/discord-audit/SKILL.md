@@ -49,7 +49,7 @@ discord-embeds__discord_execute
 
 **Allowed:** `messages.list`, `messages.get`, `messages.list_pins`, `channels.list`, `channels.get`, `roles.list`, `roles.get`, `guild.get`, `members.get`, `members.search`, `audit_log.list`, `onboarding.get`.
 
-`messages.list` returns the **newest** 1–100 messages. It has **no** `before`/`after`. Older embed cards: page IDs with cappyeo `messages_read`, then `messages.get` here.
+`messages.list` returns 1–100 messages, newest first. In this fork it also takes one of `before` / `after` / `around` (a message ID) for paging older embed cards. The fork refuses every operation outside the list above unless `DISCORD_ALLOWED_OPERATIONS` widens it.
 
 Do not execute send/edit/delete/kick/ban/timeout/prune, channel/role mutations, automod, webhooks, DMs, or `batch.*`.
 
